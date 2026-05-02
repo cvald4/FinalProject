@@ -1,1 +1,37 @@
-This project is a formal verification in Coq that proves a fundamental concept in computer science: for the problem of selecting as many elements as possible from a list that meet a certain criteria (in this case, being less than or equal to a value $n$), a greedy approach is mathematically optimal.Here is a breakdown of every part of your code, explained in plain English.1. The Foundation: Helper DefinitionsBefore proving anything, the code defines the "rules of the world" for the algorithm.less_forall n l: This is a property. It checks if every single number in a list is $\leq n$. If even one number is larger, this property is false.less_count n l: This is a function that scans a list and counts how many numbers in it satisfy the condition $\leq n$. This acts as our "target" for the maximum possible size.subset: This is a custom relation. It defines what makes a list a "sublist" of another. It allows you to skip elements but forbids you from changing their original order.2. The Algorithm: greedy_listThis is the "actor" of the project. It uses a Greedy Strategy: as it traverses the list, it makes a local decision for every element. If the element is $\leq n$, it keeps it immediately; if not, it throws it away. It never looks back and never reconsiders.3. Proving CorrectnessThe first set of theorems ensures the algorithm isn't "hallucinating" or breaking the rules.greedy_check_less: Proves that every element the greedy algorithm picks is actually $\leq n$. It ensures the output is valid.greedy_complete: Proves that the algorithm doesn't make up new numbers; the output is always a legitimate subset of the input.greedy_list_acc: Proves that the number of elements picked by the greedy algorithm is exactly the same as the total count of valid elements in the list (less_count).4. Proving OptimalityThis is the most important part of the project. You aren't just proving it works; you are proving that nothing else works better.subset_eq_all: This lemma is the heavy lifter. it proves that for any sublist $s$, if all elements in $s$ are $\leq n$, the length of $s$ can never be greater than the count of valid elements in the original list.greedy__opt: This is the "Grand Finale" theorem. It brings everything together to prove that if you have any valid subset $s$ (meaning it's a subset and all its elements are $\leq n$), its length will always be less than or equal to the length of the list produced by your greedy algorithm.5. Bonus PropertiesThe final section of your code explores how the algorithm behaves when you change the rules.equal_length_also_optimal: This theorem shows that if another valid subset happens to have the same length as the greedy result, it is also optimal.greedy_add (Monotonicity): This proves that if you increase the threshold $n$ to a higher number $n'$, the greedy algorithm for $n$ will produce a subset of what the greedy algorithm for $n'$ would produce. Essentially, "loosening the rules" only adds elements; it never requires you to remove ones you already picked.
+# Final Project: Formal Verification of a Greedy Algorithm
+
+**Author:** Chris Valdez
+**Date:** May 1, 2026
+
+## Project Overview
+This project provides a formal verification of a greedy selection algorithm using the **Coq Proof Assistant**. The core objective is to prove that for a list of natural numbers, a simple greedy filter is both correct (it only picks valid elements) and optimal (it picks the maximum possible number of valid elements).
+
+## Files Included
+* **`GreedyProof.v`**: This file contains the implementation of the greedy algorithm, the definition of the sublist relation, and all supporting proofs for correctness, completeness, and optimality.
+
+## Core Definitions
+
+### 1. `subset`
+An inductive relation that defines what it means for one list to be a sublist of another. It ensures that elements are selected without changing their original order, which is critical for proving that the greedy algorithm is a valid selection process.
+
+### 2. `greedy_list`
+The primary algorithm. It processes a list recursively: if an element is less than or equal to a threshold $n$, it is included; otherwise, it is skipped.
+
+### 3. `less_forall` & `less_count`
+Supporting recursive properties. `less_forall` checks if all elements in a list satisfy the threshold, while `less_count` determines the total number of valid elements available in the original list.
+
+## Key Lemmas and Theorems
+
+### Correctness
+* **`greedy_check_less`**: Proves that every element in the output of the greedy algorithm is $\leq n$.
+* **`greedy_complete`**: Proves that the algorithm's output is a legitimate `subset` of the input list.
+
+### Optimality
+* **`subset_eq_all`**: A fundamental lemma proving that any arbitrary valid subset cannot exceed the length of the total count of valid elements in the parent list.
+* **`greedy__opt`**: The main theorem of the project. It formally proves that for any subset $s$ that satisfies the threshold condition, its length is less than or equal to the length of the list produced by the greedy algorithm. This confirms that the greedy approach is optimal.
+
+### Properties
+* **`greedy_add`**: A monotonicity proof showing that increasing the threshold $n$ produces a result that is a subset of the result produced by a higher threshold.
+
+## Unfinished Work
+I originally proposed a formal verification of the **A* Search Algorithm** using the **Iris** framework. However, due to the significant complexity of formalizing graph heuristics and managing separation logic within the project's timeframe, I pivoted to the verification of this greedy list algorithm. This allowed for a complete and rigorous proof of optimality while still exploring the themes of greedy strategies and formal correctness.
